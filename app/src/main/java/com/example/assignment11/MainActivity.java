@@ -8,17 +8,34 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
-    public TextView outputText;
+    TextView outputText;
+    Button btnGetContacts, btnClear;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         outputText = findViewById(R.id.textView1);
-        fetchContacts();
+        btnGetContacts = findViewById(R.id.btnGetContacts);
+        btnClear = findViewById(R.id.btnClear);
+
+        btnGetContacts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fetchContacts();
+            }
+        });
+        btnClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onCreate(Bundle.EMPTY);
+            }
+        });
     }
 
     public void fetchContacts() {
@@ -47,13 +64,13 @@ public class MainActivity extends Activity {
                 int hasPhoneNumber = Integer.parseInt(cursor.getString(cursor.getColumnIndex( HAS_PHONE_NUMBER )));
 
                 if (hasPhoneNumber > 0) {
-                    output.append("\n Nimi:" + name);
+                    output.append("\n Nimi: " + name);
 
                     // Puhnumeroiden läpikäynti
                     Cursor phoneCursor = contentResolver.query(PhoneCONTENT_URI, null, Phone_CONTACT_ID + " = ?", new String[] { contact_id }, null);
                     while (phoneCursor.moveToNext()) {
                         phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(NUMBER));
-                        output.append("\n Puhnro:" + phoneNumber);
+                        output.append("\n Puhnro: " + phoneNumber);
                     }
                     phoneCursor.close();
                 }
